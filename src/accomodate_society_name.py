@@ -1,22 +1,25 @@
 import re
+
 import sqlitedatastore as datastore
+
 
 def create_annotation(doc_id, ptn):
     row = datastore.get(doc_id, fl=['content'])
     text = row['content']
     annos = []
     for chunk in datastore.get_annotation(doc_id, 'chunk'):
-        chunk_str = text[chunk['begin'] : chunk['end']]
+        chunk_str = text[chunk['begin']:chunk['end']]
         m = ptn.search(chunk_str)
         if not m:
             continue
         anno = {
-            'begin': chunk['begin'] + m.start(),
-            'end': chunk['begin'] + m.end(),
+            'begin':    chunk['begin'] + m.start(),
+            'end':      chunk['begin'] + m.end(),
         }
-        print(text[anno['begin'] : anno['end']])
+        print(text[anno['begin']:anno['end']])
         annos.append(anno)
     return annos
+
 
 if __name__ == '__main__':
     dic = [
@@ -25,6 +28,7 @@ if __name__ == '__main__':
         r'.+?協会',
     ]
     ptn = re.compile(r'|'.join(dic))
+
     anno_name = 'affiliation'
 
     datastore.connect()
